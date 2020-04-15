@@ -1,24 +1,12 @@
 'use strict';
 (() => {
+    
     const https = require('https');
     const fs = require('fs');
     const { spawn } = require('child_process');
 
-    const generateRandom = (length) => {
-        const lengthId = 20;
-        let randomId = '';
-        for (let ix = 0; ix < length; ix++) {
-            const random = Math.floor(Math.random() * (62));
-            if (random >= 36)
-                randomId += String.fromCharCode(random + 61);
-            else if (random >= 10)
-                randomId += String.fromCharCode(random + 55);
-            else
-                randomId += random;
-        }
-        return randomId;
-    };
-
+    
+    
     (function scopeWebServer() {
         const runWebServer = (passphrase) => {
             const options = {
@@ -28,18 +16,42 @@
             const server = https.createServer(options);
             
             server.on('request', (request, response) => {
-                getDateStr(dateStr => console.log(`[${dateStr}] ${request.method} href:`, _href));
-                response.writeHead(200, {
-                     'Content-Type': contentType,
-                     'Content-Length': Buffer.byteLength(resource),
-                 });
+                getDateStr(dateStr => {
+                    response.writeHead(200, {
+                        'Content-Type': 'text/plain',
+                        'Content-Length': Buffer.byteLength(dateStr),
+                    });
+                    response.end(dateStr);
+                });
             });
             server.listen(_port, () => console.log(`WebServer listening`));
         };
+        
+        
+        
         const getDateStr = callback => {
             const _date = new Date();
             callback(`${_date.getFullYear()}-${_date.getMonth() + 1}-${_date.getDate()} ${_date.getHours()}:${_date.getMinutes()}:${_date.getSeconds()}.${_date.getMilliseconds()}`);
         };
+        
+        
+        
+        const generateRandom = (length) => {
+            const lengthId = 20;
+            let randomId = '';
+            for (let ix = 0; ix < length; ix++) {
+                const random = Math.floor(Math.random() * (62));
+                if (random >= 36)
+                    randomId += String.fromCharCode(random + 61);
+                else if (random >= 10)
+                    randomId += String.fromCharCode(random + 55);
+                else
+                    randomId += random;
+            }
+            return randomId;
+        };
+        
+        
         const generateSsl = function () {
             return new Promise((resolve, reject) => {
                 const generatePrivateKey = () => {
