@@ -52,7 +52,7 @@
         };
         
         
-        const generateSsl = function () {
+        const generateRandomSsl = function () {
             return new Promise((resolve, reject) => {
                 const generatePrivateKey = () => {
                     const privateKey = spawn('openssl', ['genpkey', '-algorithm', 'RSA', '-pkeyopt', 'rsa_keygen_bits:2048', '-out', './2048/key.key']);
@@ -103,7 +103,7 @@
                 generatePrivateKey();
             });
         }();
-        generateSsl.then(passphrase => runWebServer(passphrase))
+        generateRandomSsl.then(passphrase => runWebServer(passphrase))
     })();
 })();
 
