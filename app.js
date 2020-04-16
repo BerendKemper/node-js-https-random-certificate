@@ -117,7 +117,6 @@
             // console.log('minute tick');
             setTimeout(() => startEvent(), 60000);
         })());
-        generateRandomSsl.then(passphrase => runWebServer(passphrase))
     })();
 })();
 
