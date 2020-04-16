@@ -8,12 +8,13 @@
     
     
     (function scopeWebServer() {
+        let server;
         const runWebServer = (passphrase) => {
             const options = {
                 pfx: fs.readFileSync('./2048/crt.pfx'),
                 passphrase
             };
-            const server = https.createServer(options);
+            server = https.createServer(options);
             
             server.on('request', (request, response) => {
                 getDateStr(dateStr => {
@@ -102,7 +103,20 @@
                 };
                 generatePrivateKey();
             });
-        }();
+        };
+        let then = new Date();
+        setImmediate(() => (function startEvent() {
+            const now = new Date();
+            if (now > then) {
+                generateSsl().then(passphrase => {
+                    if (server instanceof http.Server) server.close();
+                    runWebServer(passphrase);
+                });
+                then = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 2, 0, 0, 0);
+            }
+            // console.log('minute tick');
+            setTimeout(() => startEvent(), 60000);
+        })());
         generateRandomSsl.then(passphrase => runWebServer(passphrase))
     })();
 })();
